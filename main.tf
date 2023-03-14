@@ -4,5 +4,8 @@ data "tfe_oauth_client" "github" {
 }
 
 locals {
-  teams = try(transpose(merge([for _, p in var.projects : { for wn, w in p.workspaces : wn => w.tags }]...)), [])
+  teams = try(transpose(merge([
+    for _, project in var.projects : {
+      for workspace_name, workspace in project.workspaces : workspace_name => workspace.tags
+  }]...)), [])
 }
