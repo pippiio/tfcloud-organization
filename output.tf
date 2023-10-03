@@ -7,8 +7,3 @@ output "workspaces" {
   }]
   description = "A set of workspaces in Terraform Cloud"
 }
-
-output "tag_api_tokens" {
-  value       = { for team_name, t in tfe_team_token.this : team_name => sensitive(t.token) }
-  description = "A map of api tokens for each workspace tag"
-}
