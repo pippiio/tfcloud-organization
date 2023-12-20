@@ -16,7 +16,7 @@ resource "tfe_workspace" "this" {
   allow_destroy_plan    = false
   queue_all_runs        = false
   assessments_enabled   = false
-  terraform_version     = "~> 1.5.0"
+  terraform_version     = each.value.workspace.tfversion
   working_directory     = each.value.workspace.vcs != null ? each.value.workspace.vcs.working_dir : null
   tag_names             = each.value.workspace.vcs != null ? [replace(reverse(split("/", each.value.workspace.vcs.repository))[0], ".", "_")] : []
   file_triggers_enabled = try(each.value.workspace.vcs.trigger == "path", null)
