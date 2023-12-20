@@ -15,6 +15,7 @@ variable "projects" {
   type = map(object({
     workspaces = map(object({
       description = string
+      tfversion   = optional(string, "~> 1.6.0")
       vcs = optional(object({
         repository  = string
         branch      = optional(string, "main")
