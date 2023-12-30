@@ -11,7 +11,6 @@ resource "tfe_workspace" "this" {
   organization          = tfe_organization.this.id
   project_id            = tfe_project.this[each.value.project].id
   description           = each.value.workspace.description
-  execution_mode        = "remote"
   auto_apply            = each.value.workspace.vcs != null
   allow_destroy_plan    = false
   queue_all_runs        = false
@@ -34,6 +33,13 @@ resource "tfe_workspace" "this" {
   }
 }
 
+resource "tfe_workspace_settings" "this" {
+  for_each = tfe_workspace.this
+
+  workspace_id   = each.value.id
+  execution_mode = "remote"
+}
+
 resource "tfe_workspace_variable_set" "this" {
   for_each = { for entry in flatten([
     for project_name, project in var.projects : [
@@ -46,4 +52,20 @@ resource "tfe_workspace_variable_set" "this" {
 
   workspace_id    = tfe_workspace.this[each.value.workspace].id
   variable_set_id = tfe_variable_set.this[each.value.variable_set].id
+}
+
+resource "tfe_team_access" "this" {
+  for_each = { for entry in flatten([
+    for project_name, project in var.projects : [
+      for name, workspace in project.workspaces : [
+        for team, access in workspace.teams : {
+          workspace = name
+          team      = team
+          access    = access
+      }]
+  ]]) : "${entry.workspace}/${entry.team}" => entry }
+
+  access       = each.value.access
+  team_id      = tfe_team.this[each.value.team].id
+  workspace_id = tfe_project.this[each.key].id
 }

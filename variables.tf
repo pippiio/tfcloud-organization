@@ -15,7 +15,7 @@ variable "projects" {
   type = map(object({
     workspaces = map(object({
       description = string
-      tfversion   = optional(string, "~> 1.6.0")
+      tfversion   = optional(string, "~>1.6.0")
       vcs = optional(object({
         repository  = string
         branch      = optional(string, "main")
@@ -24,6 +24,7 @@ variable "projects" {
         pattern     = optional(string)
       }))
       variable_sets = optional(set(string), [])
+      teams         = optional(map(string), {})
       tags          = optional(set(string), [])
     }))
   }))
@@ -43,6 +44,9 @@ variable "projects" {
         repository    : A reference to your VCS repository in the format <organization>/<repository>
         path          : The path to the terraform code inside the repo.
       variable_sets   : A set of variable sets that should be applyed to the workspace
+      teams           : A map of teams granted access to the workspace
+        Key           : The name of the team         
+        Value         : The access granted. Valid values [read, plan, write, admin] 
       tags            : A set of tags that is associated with am exported API token 
   EOL
 }
@@ -72,5 +76,25 @@ variable "variable_sets" {
           value       : The variable value
           description : A description of the variable
           sensitive   : Wether the variable should be marked as sensitive
+  EOL
+}
+
+variable "teams" {
+  type = map(object({
+    visible         = optional(bool, false)
+    read_workspaces = optional(bool, false)
+    read_projects   = optional(bool, false)
+    members         = set(string)
+  }))
+  default     = {}
+  description = <<-EOL
+    A map of organization teams:
+
+    Key   : Name of the team
+    Value : 
+      visible         : Wether the team is visible for the entire organization
+      read_workspaces : Wether the team can read all workspaces
+      read_projects   : Wether the team can read all projects
+      members         : A set of email addresses identifying team members
   EOL
 }
