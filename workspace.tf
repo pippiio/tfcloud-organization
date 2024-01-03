@@ -67,5 +67,5 @@ resource "tfe_team_access" "this" {
 
   access       = each.value.access
   team_id      = tfe_team.this[each.value.team].id
-  workspace_id = tfe_project.this[each.key].id
+  workspace_id = tfe_workspace.this[each.value.workspace].id
 }
