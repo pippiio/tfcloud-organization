@@ -69,16 +69,16 @@ resource "tfe_team_access" "this" {
   team_id      = tfe_team.this[each.value.team].id
   workspace_id = tfe_workspace.this[each.value.workspace].id
 
-  dynamic "permissions" { 
+  dynamic "permissions" {
     for_each = each.value.access == "contributer" ? [1] : []
 
     content {
-      runs = "apply"
-      variables = "read"
-      state_versions = "read"
-      sentinel_mocks = "none"
+      runs              = "apply"
+      variables         = "read"
+      state_versions    = "read"
+      sentinel_mocks    = "none"
       workspace_locking = false
-      run_tasks = false
+      run_tasks         = false
     }
   }
 }

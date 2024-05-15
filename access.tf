@@ -24,3 +24,9 @@ resource "tfe_team_organization_members" "this" {
   team_id                     = tfe_team.this[each.key].id
   organization_membership_ids = [for member in each.value.members : tfe_organization_membership.this[member].id]
 }
+
+resource "tfe_team_token" "this" {
+  for_each = var.teams
+
+  team_id = tfe_team.this[each.key].id
+}

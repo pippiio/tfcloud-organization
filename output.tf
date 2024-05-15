@@ -7,3 +7,8 @@ output "workspaces" {
   }]
   description = "A set of workspaces in Terraform Cloud"
 }
+
+output "team_token" {
+  value     = { for team in keys(var.teams) : team => tfe_team_token.this[team].token }
+  sensitive = true
+}
