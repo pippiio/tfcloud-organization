@@ -14,8 +14,9 @@ variable "organization" {
 variable "projects" {
   type = map(object({
     workspaces = map(object({
-      description = string
-      tfversion   = optional(string, "~>1.6.0")
+      description  = string
+      tfversion    = optional(string, "~>1.8.0")
+      create_token = optional(bool, false)
       vcs = optional(object({
         repository  = string
         branch      = optional(string, "main")
@@ -40,6 +41,8 @@ variable "projects" {
     Key   : Name of the workspace
     Value : 
       description     : A description for the workspace
+      tfversion       : The Terraform version of the workspace
+      create_token    : Wether to create a token dedicated for the workspace
       vcs             :
         repository    : A reference to your VCS repository in the format <organization>/<repository>
         path          : The path to the terraform code inside the repo.
@@ -84,6 +87,7 @@ variable "teams" {
     visible         = optional(bool, false)
     read_workspaces = optional(bool, false)
     read_projects   = optional(bool, false)
+    create_token    = optional(bool, false)
     members         = set(string)
   }))
   default     = {}
@@ -95,6 +99,7 @@ variable "teams" {
       visible         : Wether the team is visible for the entire organization
       read_workspaces : Wether the team can read all workspaces
       read_projects   : Wether the team can read all projects
+      create_token    : Wether to create and output team token
       members         : A set of email addresses identifying team members
   EOL
 }

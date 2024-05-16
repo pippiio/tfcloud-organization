@@ -82,3 +82,37 @@ resource "tfe_team_access" "this" {
     }
   }
 }
+
+resource "tfe_team" "workspace" {
+  for_each = toset(flatten([
+    for project in values(var.projects) : [
+      for name, workspace in project.workspaces :
+      name if workspace.create_token
+  ]]))
+
+  name         = "ws_${each.key}"
+  organization = tfe_organization.this.name
+  visibility   = "secret"
+}
+
+resource "tfe_team_access" "workspace" {
+  for_each = tfe_team.workspace
+
+  team_id      = tfe_team.workspace[each.key].id
+  workspace_id = tfe_workspace.this[each.key].id
+
+  permissions {
+    runs              = "apply"
+    variables         = "read"
+    state_versions    = "read-outputs"
+    sentinel_mocks    = "none"
+    workspace_locking = false
+    run_tasks         = false
+  }
+}
+
+resource "tfe_team_token" "workspace" {
+  for_each = tfe_team.workspace
+
+  team_id = tfe_team.workspace[each.key].id
+}
