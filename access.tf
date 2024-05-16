@@ -26,7 +26,7 @@ resource "tfe_team_organization_members" "this" {
 }
 
 resource "tfe_team_token" "this" {
-  for_each = var.teams
+  for_each = { for name, team in var.teams : name => team if team.create_token }
 
   team_id = tfe_team.this[each.key].id
 }

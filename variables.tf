@@ -84,6 +84,7 @@ variable "teams" {
     visible         = optional(bool, false)
     read_workspaces = optional(bool, false)
     read_projects   = optional(bool, false)
+    create_token    = optional(bool, false)
     members         = set(string)
   }))
   default     = {}
@@ -95,6 +96,7 @@ variable "teams" {
       visible         : Wether the team is visible for the entire organization
       read_workspaces : Wether the team can read all workspaces
       read_projects   : Wether the team can read all projects
+      create_token    : Wether to create and output team token
       members         : A set of email addresses identifying team members
   EOL
 }

@@ -9,6 +9,6 @@ output "workspaces" {
 }
 
 output "team_token" {
-  value     = { for team in keys(var.teams) : team => tfe_team_token.this[team].token }
+  value     = { for team, token in tfe_team_token.this : team => token.token }
   sensitive = true
 }
