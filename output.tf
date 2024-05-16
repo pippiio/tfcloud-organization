@@ -12,3 +12,8 @@ output "team_token" {
   value     = { for team, token in tfe_team_token.this : team => token.token }
   sensitive = true
 }
+
+output "workspace_token" {
+  value     = { for name, token in tfe_team_token.workspace : name => token.token }
+  sensitive = true
+}
