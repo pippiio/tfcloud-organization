@@ -103,7 +103,7 @@ resource "tfe_team_access" "workspace" {
 
   permissions {
     runs              = "apply"
-    variables         = "read"
+    variables         = "write"
     state_versions    = "read-outputs"
     sentinel_mocks    = "none"
     workspace_locking = false
