@@ -17,7 +17,7 @@ resource "tfe_workspace" "this" {
   assessments_enabled   = false
   terraform_version     = each.value.workspace.tfversion
   working_directory     = each.value.workspace.vcs != null ? each.value.workspace.vcs.working_dir : null
-  tag_names             = each.value.workspace.vcs != null ? [replace(reverse(split("/", lower(each.value.workspace.vcs.repository)))[0], ".", "_")] : []
+  tag_names             = each.value.workspace.vcs != null ? toset(concat([replace(reverse(split("/", lower(each.value.workspace.vcs.repository)))[0], ".", "_")], tolist(each.value.workspace.tags))) : each.value.workspace.tags
   file_triggers_enabled = try(each.value.workspace.vcs.trigger == "path", null)
   trigger_patterns      = try(each.value.workspace.vcs.trigger == "path" ? compact([each.value.workspace.vcs.pattern]) : null, null)
 
