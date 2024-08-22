@@ -74,7 +74,7 @@ resource "tfe_team_access" "this" {
 
     content {
       runs              = "apply"
-      variables         = "read"
+      variables         = "write"
       state_versions    = "read"
       sentinel_mocks    = "none"
       workspace_locking = false
@@ -103,7 +103,7 @@ resource "tfe_team_access" "workspace" {
 
   permissions {
     runs              = "apply"
-    variables         = "write"
+    variables         = "read"
     state_versions    = "read-outputs"
     sentinel_mocks    = "none"
     workspace_locking = false
