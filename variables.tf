@@ -24,9 +24,10 @@ variable "projects" {
         trigger     = optional(string, "path")
         pattern     = optional(string)
       }))
-      variable_sets = optional(set(string), [])
-      teams         = optional(map(string), {})
-      tags          = optional(set(string), [])
+      variable_sets  = optional(set(string), [])
+      teams          = optional(map(string), {})
+      tags           = optional(set(string), [])
+      execution_mode = optional(string, "remote")
     }))
   }))
 

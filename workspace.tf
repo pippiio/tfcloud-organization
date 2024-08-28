@@ -34,10 +34,16 @@ resource "tfe_workspace" "this" {
 }
 
 resource "tfe_workspace_settings" "this" {
-  for_each = tfe_workspace.this
+  for_each = { for entry in flatten([
+    for project_name, project in var.projects : [
+      for name, workspace in project.workspaces : {
+        project   = project_name
+        name      = name
+        workspace = workspace
+  }]]) : entry.name => entry }
 
-  workspace_id   = each.value.id
-  execution_mode = "remote"
+  workspace_id   = tfe_workspace.this[each.value.name].id
+  execution_mode = each.value.workspace.execution_mode
 }
 
 resource "tfe_workspace_variable_set" "this" {
