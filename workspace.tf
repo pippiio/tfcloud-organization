@@ -102,7 +102,12 @@ resource "tfe_team" "workspace" {
 }
 
 resource "tfe_team_access" "workspace" {
-  for_each = tfe_team.workspace
+  for_each = { for _ in flatten([for project in values(var.projects) : [
+    for name, workspace in project.workspaces : {
+      workspace  = name
+      allow_lock = workspace.execution_mode == "local"
+    } if workspace.create_token
+  ]]) : _.workspace => _.allow_lock }
 
   team_id      = tfe_team.workspace[each.key].id
   workspace_id = tfe_workspace.this[each.key].id
@@ -112,7 +117,7 @@ resource "tfe_team_access" "workspace" {
     variables         = "read"
     state_versions    = "read-outputs"
     sentinel_mocks    = "none"
-    workspace_locking = false
+    workspace_locking = each.value
     run_tasks         = false
   }
 }
