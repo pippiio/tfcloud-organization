@@ -89,7 +89,7 @@ resource "tfe_team_access" "this" {
   }
 }
 
-resource "tfe_team" "workspace" {
+resource "tfe_team" "ws_token" {
   for_each = toset(flatten([
     for project in values(var.projects) : [
       for name, workspace in project.workspaces :
@@ -101,7 +101,7 @@ resource "tfe_team" "workspace" {
   visibility   = "secret"
 }
 
-resource "tfe_team_access" "workspace" {
+resource "tfe_team_access" "ws_token" {
   for_each = { for _ in flatten([for project in values(var.projects) : [
     for name, workspace in project.workspaces : {
       workspace  = name
@@ -109,21 +109,21 @@ resource "tfe_team_access" "workspace" {
     } if workspace.create_token
   ]]) : _.workspace => _.allow_lock }
 
-  team_id      = tfe_team.workspace[each.key].id
+  team_id      = tfe_team.ws_token[each.key].id
   workspace_id = tfe_workspace.this[each.key].id
 
   permissions {
     runs              = "apply"
     variables         = "read"
-    state_versions    = "read-outputs"
+    state_versions    = "write"
     sentinel_mocks    = "none"
     workspace_locking = each.value
     run_tasks         = false
   }
 }
 
-resource "tfe_team_token" "workspace" {
-  for_each = tfe_team.workspace
+resource "tfe_team_token" "ws_token" {
+  for_each = tfe_team.ws_token
 
-  team_id = tfe_team.workspace[each.key].id
+  team_id = tfe_team.ws_token[each.key].id
 }
